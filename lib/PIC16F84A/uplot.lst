@@ -1,0 +1,1022 @@
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  1
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00001 ;--------------------------------------------------------
+                      00002 ; File Created by SDCC : free open source ANSI-C Compiler
+                      00003 ; Version 3.6.0 #9615 (Linux)
+                      00004 ;--------------------------------------------------------
+                      00005 ; PIC port for the 14-bit core
+                      00006 ;--------------------------------------------------------
+                      00007 ;       .file   "src/uplot.c"
+                      00008         list    p=16f84
+                      00009         radix dec
+                      00010         include "p16f84.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Oct 21 2015
+                      00005 ;  MPASM PIC16F84 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2015 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      00207         LIST
+                      00011 ;--------------------------------------------------------
+                      00012 ; external declarations
+                      00013 ;--------------------------------------------------------
+  0000                00014         extern  __mulint
+  0000                00015         extern  __divuint
+  0000                00016         extern  __gptrget2
+  0000                00017         extern  __gptrput2
+                      00018 
+  0000                00019         extern PSAVE
+  0000                00020         extern SSAVE
+  0000                00021         extern WSAVE
+  0000                00022         extern STK12
+  0000                00023         extern STK11
+  0000                00024         extern STK10
+  0000                00025         extern STK09
+  0000                00026         extern STK08
+  0000                00027         extern STK07
+  0000                00028         extern STK06
+  0000                00029         extern STK05
+  0000                00030         extern STK04
+  0000                00031         extern STK03
+  0000                00032         extern STK02
+  0000                00033         extern STK01
+  0000                00034         extern STK00
+                      00035 ;--------------------------------------------------------
+                      00036 ; global declarations
+                      00037 ;--------------------------------------------------------
+  0000                00038         global  _zerobuffer
+  0000                00039         global  _uplot
+                      00040 
+                      00041 ;--------------------------------------------------------
+                      00042 ; global definitions
+                      00043 ;--------------------------------------------------------
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  2
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00044 ;--------------------------------------------------------
+                      00045 ; absolute symbol definitions
+                      00046 ;--------------------------------------------------------
+                      00047 ;--------------------------------------------------------
+                      00048 ; compiler-defined variables
+                      00049 ;--------------------------------------------------------
+                      00050 UDL_uplot_0     udata
+0000                  00051 r0x100E res     1
+0001                  00052 r0x100D res     1
+0002                  00053 r0x100C res     1
+0003                  00054 r0x1011 res     1
+0004                  00055 r0x1010 res     1
+0005                  00056 r0x100F res     1
+0006                  00057 r0x1013 res     1
+0007                  00058 r0x1012 res     1
+0008                  00059 r0x1015 res     1
+0009                  00060 r0x1014 res     1
+000A                  00061 r0x1017 res     1
+000B                  00062 r0x1016 res     1
+000C                  00063 r0x1019 res     1
+000D                  00064 r0x1018 res     1
+000E                  00065 r0x101A res     1
+000F                  00066 r0x101B res     1
+0010                  00067 r0x101C res     1
+0011                  00068 r0x101D res     1
+0012                  00069 r0x101E res     1
+0013                  00070 r0x101F res     1
+0014                  00071 r0x1020 res     1
+0015                  00072 r0x1021 res     1
+0016                  00073 r0x1022 res     1
+0017                  00074 r0x1023 res     1
+0018                  00075 r0x1024 res     1
+0019                  00076 r0x1026 res     1
+001A                  00077 r0x1025 res     1
+001B                  00078 r0x1002 res     1
+001C                  00079 r0x1001 res     1
+001D                  00080 r0x1000 res     1
+001E                  00081 r0x1004 res     1
+001F                  00082 r0x1003 res     1
+0020                  00083 r0x1005 res     1
+0021                  00084 r0x1006 res     1
+0022                  00085 r0x1007 res     1
+0023                  00086 r0x1008 res     1
+0024                  00087 r0x1009 res     1
+0025                  00088 r0x100A res     1
+0026                  00089 r0x100B res     1
+                      00090 ;--------------------------------------------------------
+                      00091 ; initialized data
+                      00092 ;--------------------------------------------------------
+                      00093 ;--------------------------------------------------------
+                      00094 ; overlayable items in internal ram 
+                      00095 ;--------------------------------------------------------
+                      00096 ;       udata_ovr
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  3
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00097 ;--------------------------------------------------------
+                      00098 ; code
+                      00099 ;--------------------------------------------------------
+                      00100 code_uplot      code
+                      00101 ;***
+                      00102 ;  pBlock Stats: dbName = C
+                      00103 ;***
+                      00104 ;has an exit
+                      00105 ;functions called:
+                      00106 ;   __gptrput2
+                      00107 ;   __gptrput2
+                      00108 ;16 compiler assigned registers:
+                      00109 ;   r0x1000
+                      00110 ;   STK00
+                      00111 ;   r0x1001
+                      00112 ;   STK01
+                      00113 ;   r0x1002
+                      00114 ;   STK02
+                      00115 ;   r0x1003
+                      00116 ;   STK03
+                      00117 ;   r0x1004
+                      00118 ;   r0x1005
+                      00119 ;   r0x1006
+                      00120 ;   r0x1007
+                      00121 ;   r0x1008
+                      00122 ;   r0x1009
+                      00123 ;   r0x100A
+                      00124 ;   r0x100B
+                      00125 ;; Starting pCode block
+                      00126 S_uplot__zerobuffer     code
+0000                  00127 _zerobuffer:
+                      00128 ; 2 exit points
+                      00129 ;       .line   26; "src/uplot.c"       void zerobuffer(unsigned int* buffer, const unsigned int len) {
+0000   00??           00130         MOVWF   r0x1000
+0001   08??           00131         MOVF    STK00,W
+0002   00??           00132         MOVWF   r0x1001
+0003   08??           00133         MOVF    STK01,W
+0004   00??           00134         MOVWF   r0x1002
+0005   08??           00135         MOVF    STK02,W
+0006   00??           00136         MOVWF   r0x1003
+0007   08??           00137         MOVF    STK03,W
+0008   00??           00138         MOVWF   r0x1004
+                      00139 ;       .line   28; "src/uplot.c"       for(i = 0; i < len; i++){
+0009   01??           00140         CLRF    r0x1005
+000A   01??           00141         CLRF    r0x1006
+000B   01??           00142         CLRF    r0x1007
+000C   01??           00143         CLRF    r0x1008
+000D                  00144 _00167_DS_:
+000D   08??           00145         MOVF    r0x1003,W
+000E   02??           00146         SUBWF   r0x1006,W
+000F   1D03           00147         BTFSS   STATUS,2
+0010   2???           00148         GOTO    _00178_DS_
+0011   08??           00149         MOVF    r0x1004,W
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  4
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0012   02??           00150         SUBWF   r0x1005,W
+0013                  00151 _00178_DS_:
+0013   1803           00152         BTFSC   STATUS,0
+0014   2???           00153         GOTO    _00169_DS_
+                      00154 ;;genSkipc:3257: created from rifx:0xffd87e54
+                      00155 ;       .line   29; "src/uplot.c"       buffer[i] = 0;
+0015   08??           00156         MOVF    r0x1007,W
+0016   07??           00157         ADDWF   r0x1002,W
+0017   00??           00158         MOVWF   r0x1009
+0018   08??           00159         MOVF    r0x1001,W
+0019   00??           00160         MOVWF   r0x100A
+001A   08??           00161         MOVF    r0x1008,W
+001B   1803           00162         BTFSC   STATUS,0
+001C   0F??           00163         INCFSZ  r0x1008,W
+001D   07??           00164         ADDWF   r0x100A,F
+001E   08??           00165         MOVF    r0x1000,W
+001F   1803           00166         BTFSC   STATUS,0
+0020   3E01           00167         ADDLW   0x01
+0021   00??           00168         MOVWF   r0x100B
+0022   3000           00169         MOVLW   0x00
+0023   00??           00170         MOVWF   STK02
+0024   3000           00171         MOVLW   0x00
+0025   00??           00172         MOVWF   STK03
+0026   08??           00173         MOVF    r0x1009,W
+0027   00??           00174         MOVWF   STK01
+0028   08??           00175         MOVF    r0x100A,W
+0029   00??           00176         MOVWF   STK00
+002A   08??           00177         MOVF    r0x100B,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00178         PAGESEL __gptrput2
+002B   2???           00179         CALL    __gptrput2
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00180         PAGESEL $
+                      00181 ;       .line   28; "src/uplot.c"       for(i = 0; i < len; i++){
+002C   3002           00182         MOVLW   0x02
+002D   07??           00183         ADDWF   r0x1007,F
+002E   1803           00184         BTFSC   STATUS,0
+002F   0A??           00185         INCF    r0x1008,F
+0030   0A??           00186         INCF    r0x1005,F
+0031   1903           00187         BTFSC   STATUS,2
+0032   0A??           00188         INCF    r0x1006,F
+0033   2???           00189         GOTO    _00167_DS_
+0034                  00190 _00169_DS_:
+0034   0008           00191         RETURN  
+                      00192 ; exit point of _zerobuffer
+                      00193 
+                      00194 ;***
+                      00195 ;  pBlock Stats: dbName = C
+                      00196 ;***
+                      00197 ;has an exit
+                      00198 ;functions called:
+                      00199 ;   __mulint
+                      00200 ;   _zerobuffer
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  5
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00201 ;   __gptrget2
+                      00202 ;   __gptrget2
+                      00203 ;   __gptrget2
+                      00204 ;   __gptrget2
+                      00205 ;   __mulint
+                      00206 ;   __divuint
+                      00207 ;   __mulint
+                      00208 ;   __mulint
+                      00209 ;   __gptrput2
+                      00210 ;   __mulint
+                      00211 ;   _zerobuffer
+                      00212 ;   __gptrget2
+                      00213 ;   __gptrget2
+                      00214 ;   __gptrget2
+                      00215 ;   __gptrget2
+                      00216 ;   __mulint
+                      00217 ;   __divuint
+                      00218 ;   __mulint
+                      00219 ;   __mulint
+                      00220 ;   __gptrput2
+                      00221 ;38 compiler assigned registers:
+                      00222 ;   r0x100C
+                      00223 ;   STK00
+                      00224 ;   r0x100D
+                      00225 ;   STK01
+                      00226 ;   r0x100E
+                      00227 ;   STK02
+                      00228 ;   r0x100F
+                      00229 ;   STK03
+                      00230 ;   r0x1010
+                      00231 ;   STK04
+                      00232 ;   r0x1011
+                      00233 ;   STK05
+                      00234 ;   r0x1012
+                      00235 ;   STK06
+                      00236 ;   r0x1013
+                      00237 ;   STK07
+                      00238 ;   r0x1014
+                      00239 ;   STK08
+                      00240 ;   r0x1015
+                      00241 ;   STK09
+                      00242 ;   r0x1016
+                      00243 ;   STK10
+                      00244 ;   r0x1017
+                      00245 ;   r0x1018
+                      00246 ;   r0x1019
+                      00247 ;   r0x101A
+                      00248 ;   r0x101B
+                      00249 ;   r0x101C
+                      00250 ;   r0x101D
+                      00251 ;   r0x101E
+                      00252 ;   r0x101F
+                      00253 ;   r0x1020
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  6
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+                      00254 ;   r0x1021
+                      00255 ;   r0x1022
+                      00256 ;   r0x1023
+                      00257 ;   r0x1024
+                      00258 ;   r0x1025
+                      00259 ;   r0x1026
+                      00260 ;; Starting pCode block
+                      00261 S_uplot__uplot  code
+0000                  00262 _uplot:
+                      00263 ; 2 exit points
+                      00264 ;       .line   3; "src/uplot.c"        extern int uplot(unsigned int* fb, const unsigned int* d, const 
+                            unsigned int len, const unsigned int width, const unsigned int height) {
+0000   00??           00265         MOVWF   r0x100C
+0001   08??           00266         MOVF    STK00,W
+0002   00??           00267         MOVWF   r0x100D
+0003   08??           00268         MOVF    STK01,W
+0004   00??           00269         MOVWF   r0x100E
+0005   08??           00270         MOVF    STK02,W
+0006   00??           00271         MOVWF   r0x100F
+0007   08??           00272         MOVF    STK03,W
+0008   00??           00273         MOVWF   r0x1010
+0009   08??           00274         MOVF    STK04,W
+000A   00??           00275         MOVWF   r0x1011
+000B   08??           00276         MOVF    STK05,W
+000C   00??           00277         MOVWF   r0x1012
+000D   08??           00278         MOVF    STK06,W
+000E   00??           00279         MOVWF   r0x1013
+000F   08??           00280         MOVF    STK07,W
+0010   00??           00281         MOVWF   r0x1014
+0011   08??           00282         MOVF    STK08,W
+0012   00??           00283         MOVWF   r0x1015
+0013   08??           00284         MOVF    STK09,W
+0014   00??           00285         MOVWF   r0x1016
+0015   08??           00286         MOVF    STK10,W
+                      00287 ;       .line   5; "src/uplot.c"        zerobuffer(fb, width * height);
+0016   00??           00288         MOVWF   r0x1017
+0017   00??           00289         MOVWF   STK02
+0018   08??           00290         MOVF    r0x1016,W
+0019   00??           00291         MOVWF   STK01
+001A   08??           00292         MOVF    r0x1015,W
+001B   00??           00293         MOVWF   STK00
+001C   08??           00294         MOVF    r0x1014,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00295         PAGESEL __mulint
+001D   2???           00296         CALL    __mulint
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00297         PAGESEL $
+001E   00??           00298         MOVWF   r0x1018
+001F   08??           00299         MOVF    STK00,W
+0020   00??           00300         MOVWF   r0x1019
+0021   00??           00301         MOVWF   STK03
+0022   08??           00302         MOVF    r0x1018,W
+0023   00??           00303         MOVWF   STK02
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  7
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0024   08??           00304         MOVF    r0x100E,W
+0025   00??           00305         MOVWF   STK01
+0026   08??           00306         MOVF    r0x100D,W
+0027   00??           00307         MOVWF   STK00
+0028   08??           00308         MOVF    r0x100C,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00309         PAGESEL _zerobuffer
+0029   2???           00310         CALL    _zerobuffer
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00311         PAGESEL $
+                      00312 ;;unsigned compare: left < lit(0x2=2), size=2
+                      00313 ;       .line   6; "src/uplot.c"        if(2 > len || 2 > width || 2 > height) {
+002A   3000           00314         MOVLW   0x00
+002B   02??           00315         SUBWF   r0x1012,W
+002C   1D03           00316         BTFSS   STATUS,2
+002D   2???           00317         GOTO    _00154_DS_
+002E   3002           00318         MOVLW   0x02
+002F   02??           00319         SUBWF   r0x1013,W
+0030                  00320 _00154_DS_:
+0030   1C03           00321         BTFSS   STATUS,0
+0031   2???           00322         GOTO    _00105_DS_
+                      00323 ;;genSkipc:3257: created from rifx:0xffd87e54
+                      00324 ;;unsigned compare: left < lit(0x2=2), size=2
+0032   3000           00325         MOVLW   0x00
+0033   02??           00326         SUBWF   r0x1014,W
+0034   1D03           00327         BTFSS   STATUS,2
+0035   2???           00328         GOTO    _00155_DS_
+0036   3002           00329         MOVLW   0x02
+0037   02??           00330         SUBWF   r0x1015,W
+0038                  00331 _00155_DS_:
+0038   1C03           00332         BTFSS   STATUS,0
+0039   2???           00333         GOTO    _00105_DS_
+                      00334 ;;genSkipc:3257: created from rifx:0xffd87e54
+                      00335 ;;unsigned compare: left < lit(0x2=2), size=2
+003A   3000           00336         MOVLW   0x00
+003B   02??           00337         SUBWF   r0x1016,W
+003C   1D03           00338         BTFSS   STATUS,2
+003D   2???           00339         GOTO    _00156_DS_
+003E   3002           00340         MOVLW   0x02
+003F   02??           00341         SUBWF   r0x1017,W
+0040                  00342 _00156_DS_:
+0040   1803           00343         BTFSC   STATUS,0
+0041   2???           00344         GOTO    _00106_DS_
+                      00345 ;;genSkipc:3257: created from rifx:0xffd87e54
+0042                  00346 _00105_DS_:
+                      00347 ;       .line   7; "src/uplot.c"        return -1;
+0042   30FF           00348         MOVLW   0xff
+0043   00??           00349         MOVWF   STK00
+0044   30FF           00350         MOVLW   0xff
+0045   2???           00351         GOTO    _00123_DS_
+0046                  00352 _00106_DS_:
+                      00353 ;       .line   10; "src/uplot.c"       min = max = fb[0];
+0046   08??           00354         MOVF    r0x100E,W
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  8
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0047   00??           00355         MOVWF   STK01
+0048   08??           00356         MOVF    r0x100D,W
+0049   00??           00357         MOVWF   STK00
+004A   08??           00358         MOVF    r0x100C,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00359         PAGESEL __gptrget2
+004B   2???           00360         CALL    __gptrget2
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00361         PAGESEL $
+004C   00??           00362         MOVWF   r0x101B
+004D   00??           00363         MOVWF   r0x1018
+004E   08??           00364         MOVF    STK00,W
+004F   00??           00365         MOVWF   r0x1019
+0050   00??           00366         MOVWF   r0x101A
+                      00367 ;;99    MOVF    r0x1018,W
+                      00368 ;       .line   11; "src/uplot.c"       for(i = 1; i < len; i++) {
+0051   3001           00369         MOVLW   0x01
+0052   00??           00370         MOVWF   r0x101C
+0053   01??           00371         CLRF    r0x101D
+0054   3002           00372         MOVLW   0x02
+0055   00??           00373         MOVWF   r0x101E
+0056   01??           00374         CLRF    r0x101F
+0057   3002           00375         MOVLW   0x02
+0058   00??           00376         MOVWF   r0x1020
+0059   01??           00377         CLRF    r0x1021
+005A                  00378 _00118_DS_:
+005A   08??           00379         MOVF    r0x1012,W
+005B   02??           00380         SUBWF   r0x101D,W
+005C   1D03           00381         BTFSS   STATUS,2
+005D   2???           00382         GOTO    _00157_DS_
+005E   08??           00383         MOVF    r0x1013,W
+005F   02??           00384         SUBWF   r0x101C,W
+0060                  00385 _00157_DS_:
+0060   1803           00386         BTFSC   STATUS,0
+0061   2???           00387         GOTO    _00113_DS_
+                      00388 ;;genSkipc:3257: created from rifx:0xffd87e54
+                      00389 ;       .line   12; "src/uplot.c"       if (d[i] < min) min = d[i];
+0062   08??           00390         MOVF    r0x101E,W
+0063   07??           00391         ADDWF   r0x1011,W
+0064   00??           00392         MOVWF   r0x1022
+0065   08??           00393         MOVF    r0x1010,W
+0066   00??           00394         MOVWF   r0x1023
+0067   08??           00395         MOVF    r0x101F,W
+0068   1803           00396         BTFSC   STATUS,0
+0069   0F??           00397         INCFSZ  r0x101F,W
+006A   07??           00398         ADDWF   r0x1023,F
+006B   08??           00399         MOVF    r0x100F,W
+006C   1803           00400         BTFSC   STATUS,0
+006D   3E01           00401         ADDLW   0x01
+006E   00??           00402         MOVWF   r0x1024
+006F   08??           00403         MOVF    r0x1022,W
+0070   00??           00404         MOVWF   STK01
+0071   08??           00405         MOVF    r0x1023,W
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE  9
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0072   00??           00406         MOVWF   STK00
+0073   08??           00407         MOVF    r0x1024,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00408         PAGESEL __gptrget2
+0074   2???           00409         CALL    __gptrget2
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00410         PAGESEL $
+0075   00??           00411         MOVWF   r0x1025
+0076   08??           00412         MOVF    STK00,W
+0077   00??           00413         MOVWF   r0x1026
+0078   08??           00414         MOVF    r0x1018,W
+0079   02??           00415         SUBWF   r0x1025,W
+007A   1D03           00416         BTFSS   STATUS,2
+007B   2???           00417         GOTO    _00158_DS_
+007C   08??           00418         MOVF    r0x1019,W
+007D   02??           00419         SUBWF   r0x1026,W
+007E                  00420 _00158_DS_:
+007E   1803           00421         BTFSC   STATUS,0
+007F   2???           00422         GOTO    _00110_DS_
+                      00423 ;;genSkipc:3257: created from rifx:0xffd87e54
+0080   08??           00424         MOVF    r0x1026,W
+0081   00??           00425         MOVWF   r0x1019
+0082   08??           00426         MOVF    r0x1025,W
+0083   00??           00427         MOVWF   r0x1018
+0084                  00428 _00110_DS_:
+                      00429 ;       .line   13; "src/uplot.c"       if (d[i] > max) max = d[i];
+0084   08??           00430         MOVF    r0x1020,W
+0085   07??           00431         ADDWF   r0x1011,W
+0086   00??           00432         MOVWF   r0x1022
+0087   08??           00433         MOVF    r0x1010,W
+0088   00??           00434         MOVWF   r0x1023
+0089   08??           00435         MOVF    r0x1021,W
+008A   1803           00436         BTFSC   STATUS,0
+008B   0F??           00437         INCFSZ  r0x1021,W
+008C   07??           00438         ADDWF   r0x1023,F
+008D   08??           00439         MOVF    r0x100F,W
+008E   1803           00440         BTFSC   STATUS,0
+008F   3E01           00441         ADDLW   0x01
+0090   00??           00442         MOVWF   r0x1024
+0091   08??           00443         MOVF    r0x1022,W
+0092   00??           00444         MOVWF   STK01
+0093   08??           00445         MOVF    r0x1023,W
+0094   00??           00446         MOVWF   STK00
+0095   08??           00447         MOVF    r0x1024,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00448         PAGESEL __gptrget2
+0096   2???           00449         CALL    __gptrget2
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00450         PAGESEL $
+0097   00??           00451         MOVWF   r0x1025
+0098   08??           00452         MOVF    STK00,W
+0099   00??           00453         MOVWF   r0x1026
+009A   08??           00454         MOVF    r0x1025,W
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 10
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+009B   02??           00455         SUBWF   r0x101B,W
+009C   1D03           00456         BTFSS   STATUS,2
+009D   2???           00457         GOTO    _00159_DS_
+009E   08??           00458         MOVF    r0x1026,W
+009F   02??           00459         SUBWF   r0x101A,W
+00A0                  00460 _00159_DS_:
+00A0   1803           00461         BTFSC   STATUS,0
+00A1   2???           00462         GOTO    _00119_DS_
+                      00463 ;;genSkipc:3257: created from rifx:0xffd87e54
+00A2   08??           00464         MOVF    r0x1026,W
+00A3   00??           00465         MOVWF   r0x101A
+00A4   08??           00466         MOVF    r0x1025,W
+00A5   00??           00467         MOVWF   r0x101B
+00A6                  00468 _00119_DS_:
+                      00469 ;       .line   11; "src/uplot.c"       for(i = 1; i < len; i++) {
+00A6   3002           00470         MOVLW   0x02
+00A7   07??           00471         ADDWF   r0x101E,F
+00A8   1803           00472         BTFSC   STATUS,0
+00A9   0A??           00473         INCF    r0x101F,F
+00AA   3002           00474         MOVLW   0x02
+00AB   07??           00475         ADDWF   r0x1020,F
+00AC   1803           00476         BTFSC   STATUS,0
+00AD   0A??           00477         INCF    r0x1021,F
+00AE   0A??           00478         INCF    r0x101C,F
+00AF   1903           00479         BTFSC   STATUS,2
+00B0   0A??           00480         INCF    r0x101D,F
+00B1   2???           00481         GOTO    _00118_DS_
+00B2                  00482 _00113_DS_:
+                      00483 ;       .line   15; "src/uplot.c"       if(0 == max) {
+00B2   08??           00484         MOVF    r0x101A,W
+00B3   04??           00485         IORWF   r0x101B,W
+00B4   1D03           00486         BTFSS   STATUS,2
+00B5   2???           00487         GOTO    _00133_DS_
+                      00488 ;       .line   16; "src/uplot.c"       return -1;
+00B6   30FF           00489         MOVLW   0xff
+00B7   00??           00490         MOVWF   STK00
+00B8   30FF           00491         MOVLW   0xff
+00B9   2???           00492         GOTO    _00123_DS_
+00BA                  00493 _00133_DS_:
+                      00494 ;       .line   18; "src/uplot.c"       for(i = 0; i < len; i++) {
+00BA   30FF           00495         MOVLW   0xff
+00BB   07??           00496         ADDWF   r0x1017,F
+00BC   1C03           00497         BTFSS   STATUS,0
+00BD   03??           00498         DECF    r0x1016,F
+00BE   01??           00499         CLRF    r0x1019
+00BF   01??           00500         CLRF    r0x1018
+00C0   01??           00501         CLRF    r0x101C
+00C1   01??           00502         CLRF    r0x101D
+00C2                  00503 _00121_DS_:
+00C2   08??           00504         MOVF    r0x1012,W
+00C3   02??           00505         SUBWF   r0x1018,W
+00C4   1D03           00506         BTFSS   STATUS,2
+00C5   2???           00507         GOTO    _00160_DS_
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 11
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+00C6   08??           00508         MOVF    r0x1013,W
+00C7   02??           00509         SUBWF   r0x1019,W
+00C8                  00510 _00160_DS_:
+00C8   1803           00511         BTFSC   STATUS,0
+00C9   2???           00512         GOTO    _00116_DS_
+                      00513 ;;genSkipc:3257: created from rifx:0xffd87e54
+                      00514 ;       .line   20; "src/uplot.c"       y = d[i] * (height - 1) / max;
+00CA   08??           00515         MOVF    r0x101C,W
+00CB   07??           00516         ADDWF   r0x1011,W
+00CC   00??           00517         MOVWF   r0x101E
+00CD   08??           00518         MOVF    r0x1010,W
+00CE   00??           00519         MOVWF   r0x101F
+00CF   08??           00520         MOVF    r0x101D,W
+00D0   1803           00521         BTFSC   STATUS,0
+00D1   0F??           00522         INCFSZ  r0x101D,W
+00D2   07??           00523         ADDWF   r0x101F,F
+00D3   08??           00524         MOVF    r0x100F,W
+00D4   1803           00525         BTFSC   STATUS,0
+00D5   3E01           00526         ADDLW   0x01
+00D6   00??           00527         MOVWF   r0x1020
+00D7   08??           00528         MOVF    r0x101E,W
+00D8   00??           00529         MOVWF   STK01
+00D9   08??           00530         MOVF    r0x101F,W
+00DA   00??           00531         MOVWF   STK00
+00DB   08??           00532         MOVF    r0x1020,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00533         PAGESEL __gptrget2
+00DC   2???           00534         CALL    __gptrget2
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00535         PAGESEL $
+00DD   00??           00536         MOVWF   r0x1022
+00DE   08??           00537         MOVF    STK00,W
+00DF   00??           00538         MOVWF   r0x1021
+00E0   08??           00539         MOVF    r0x1017,W
+00E1   00??           00540         MOVWF   STK02
+00E2   08??           00541         MOVF    r0x1016,W
+00E3   00??           00542         MOVWF   STK01
+00E4   08??           00543         MOVF    r0x1021,W
+00E5   00??           00544         MOVWF   STK00
+00E6   08??           00545         MOVF    r0x1022,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00546         PAGESEL __mulint
+00E7   2???           00547         CALL    __mulint
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00548         PAGESEL $
+00E8   00??           00549         MOVWF   r0x101F
+00E9   08??           00550         MOVF    STK00,W
+00EA   00??           00551         MOVWF   r0x101E
+00EB   08??           00552         MOVF    r0x101A,W
+00EC   00??           00553         MOVWF   STK02
+00ED   08??           00554         MOVF    r0x101B,W
+00EE   00??           00555         MOVWF   STK01
+00EF   08??           00556         MOVF    r0x101E,W
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 12
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+00F0   00??           00557         MOVWF   STK00
+00F1   08??           00558         MOVF    r0x101F,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00559         PAGESEL __divuint
+00F2   2???           00560         CALL    __divuint
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00561         PAGESEL $
+00F3   00??           00562         MOVWF   r0x101F
+00F4   08??           00563         MOVF    STK00,W
+                      00564 ;       .line   21; "src/uplot.c"       fb[(height - 1 - y) * width + x] = 1;
+00F5   00??           00565         MOVWF   r0x101E
+00F6   02??           00566         SUBWF   r0x1017,W
+00F7   00??           00567         MOVWF   r0x101E
+00F8   08??           00568         MOVF    r0x101F,W
+00F9   1C03           00569         BTFSS   STATUS,0
+00FA   0A??           00570         INCF    r0x101F,W
+00FB   02??           00571         SUBWF   r0x1016,W
+00FC   00??           00572         MOVWF   r0x101F
+00FD   08??           00573         MOVF    r0x1015,W
+00FE   00??           00574         MOVWF   STK02
+00FF   08??           00575         MOVF    r0x1014,W
+0100   00??           00576         MOVWF   STK01
+0101   08??           00577         MOVF    r0x101E,W
+0102   00??           00578         MOVWF   STK00
+0103   08??           00579         MOVF    r0x101F,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00580         PAGESEL __mulint
+0104   2???           00581         CALL    __mulint
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00582         PAGESEL $
+0105   00??           00583         MOVWF   r0x101F
+0106   08??           00584         MOVF    STK00,W
+0107   00??           00585         MOVWF   r0x101E
+0108   08??           00586         MOVF    r0x1019,W
+0109   07??           00587         ADDWF   r0x101E,F
+010A   08??           00588         MOVF    r0x1018,W
+010B   1803           00589         BTFSC   STATUS,0
+010C   0F??           00590         INCFSZ  r0x1018,W
+010D   07??           00591         ADDWF   r0x101F,F
+010E   08??           00592         MOVF    r0x101E,W
+010F   00??           00593         MOVWF   STK02
+0110   08??           00594         MOVF    r0x101F,W
+0111   00??           00595         MOVWF   STK01
+0112   3002           00596         MOVLW   0x02
+0113   00??           00597         MOVWF   STK00
+0114   3000           00598         MOVLW   0x00
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00599         PAGESEL __mulint
+0115   2???           00600         CALL    __mulint
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00601         PAGESEL $
+0116   00??           00602         MOVWF   r0x101F
+0117   08??           00603         MOVF    STK00,W
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 13
+
+
+LOC    OBJECT CODE    LINE  SOURCE TEXT
+  VALUE
+
+0118   00??           00604         MOVWF   r0x101E
+0119   07??           00605         ADDWF   r0x100E,W
+011A   00??           00606         MOVWF   r0x101E
+011B   08??           00607         MOVF    r0x100D,W
+011C   00??           00608         MOVWF   r0x101F
+011D   1803           00609         BTFSC   STATUS,0
+011E   0F??           00610         INCFSZ  r0x101F,W
+011F   07??           00611         ADDWF   r0x101F,F
+0120   08??           00612         MOVF    r0x100C,W
+0121   1803           00613         BTFSC   STATUS,0
+0122   3E01           00614         ADDLW   0x01
+0123   00??           00615         MOVWF   r0x1020
+0124   3000           00616         MOVLW   0x00
+0125   00??           00617         MOVWF   STK02
+0126   3001           00618         MOVLW   0x01
+0127   00??           00619         MOVWF   STK03
+0128   08??           00620         MOVF    r0x101E,W
+0129   00??           00621         MOVWF   STK01
+012A   08??           00622         MOVF    r0x101F,W
+012B   00??           00623         MOVWF   STK00
+012C   08??           00624         MOVF    r0x1020,W
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00625         PAGESEL __gptrput2
+012D   2???           00626         CALL    __gptrput2
+Message[1304]: Page selection not needed for this device. No code generated.
+                      00627         PAGESEL $
+                      00628 ;       .line   18; "src/uplot.c"       for(i = 0; i < len; i++) {
+012E   3002           00629         MOVLW   0x02
+012F   07??           00630         ADDWF   r0x101C,F
+0130   1803           00631         BTFSC   STATUS,0
+0131   0A??           00632         INCF    r0x101D,F
+0132   0A??           00633         INCF    r0x1019,F
+0133   1903           00634         BTFSC   STATUS,2
+0134   0A??           00635         INCF    r0x1018,F
+0135   2???           00636         GOTO    _00121_DS_
+0136                  00637 _00116_DS_:
+                      00638 ;       .line   23; "src/uplot.c"       return i;
+0136   08??           00639         MOVF    r0x1019,W
+0137   00??           00640         MOVWF   STK00
+0138   08??           00641         MOVF    r0x1018,W
+0139                  00642 _00123_DS_:
+0139   0008           00643         RETURN  
+                      00644 ; exit point of _uplot
+                      00645 
+                      00646 
+                      00647 ;       code size estimation:
+                      00648 ;         367+   24 =   391 instructions (  830 byte)
+                      00649 
+                      00650         end
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                              TYPE        VALUE         VALUE          VALUE
+                                                 (hex)         (dec)          (text)
+
+C                                 CONSTANT      00000000              0
+DC                                CONSTANT      00000001              1
+EEADR                             CONSTANT      00000009              9
+EECON1                            CONSTANT      00000088            136
+EECON2                            CONSTANT      00000089            137
+EEDATA                            CONSTANT      00000008              8
+EEIE                              CONSTANT      00000006              6
+EEIF                              CONSTANT      00000004              4
+F                                 CONSTANT      00000001              1
+FSR                               CONSTANT      00000004              4
+GIE                               CONSTANT      00000007              7
+INDF                              CONSTANT      00000000              0
+INTCON                            CONSTANT      0000000B             11
+INTE                              CONSTANT      00000004              4
+INTEDG                            CONSTANT      00000006              6
+INTF                              CONSTANT      00000001              1
+IRP                               CONSTANT      00000007              7
+NOT_PD                            CONSTANT      00000003              3
+NOT_RBPU                          CONSTANT      00000007              7
+NOT_TO                            CONSTANT      00000004              4
+OPTION_REG                        CONSTANT      00000081            129
+PCL                               CONSTANT      00000002              2
+PCLATH                            CONSTANT      0000000A             10
+PORTA                             CONSTANT      00000005              5
+PORTB                             CONSTANT      00000006              6
+PS0                               CONSTANT      00000000              0
+PS1                               CONSTANT      00000001              1
+PS2                               CONSTANT      00000002              2
+PSA                               CONSTANT      00000003              3
+PSAVE                             EXTERNAL      00000000              0
+RA0                               CONSTANT      00000000              0
+RA1                               CONSTANT      00000001              1
+RA2                               CONSTANT      00000002              2
+RA3                               CONSTANT      00000003              3
+RA4                               CONSTANT      00000004              4
+RB0                               CONSTANT      00000000              0
+RB1                               CONSTANT      00000001              1
+RB2                               CONSTANT      00000002              2
+RB3                               CONSTANT      00000003              3
+RB4                               CONSTANT      00000004              4
+RB5                               CONSTANT      00000005              5
+RB6                               CONSTANT      00000006              6
+RB7                               CONSTANT      00000007              7
+RBIE                              CONSTANT      00000003              3
+RBIF                              CONSTANT      00000000              0
+RD                                CONSTANT      00000000              0
+RP0                               CONSTANT      00000005              5
+RP1                               CONSTANT      00000006              6
+SSAVE                             EXTERNAL      00000000              0
+STATUS                            CONSTANT      00000003              3
+STK00                             EXTERNAL      00000000              0
+STK01                             EXTERNAL      00000000              0
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                              TYPE        VALUE         VALUE          VALUE
+                                                 (hex)         (dec)          (text)
+
+STK02                             EXTERNAL      00000000              0
+STK03                             EXTERNAL      00000000              0
+STK04                             EXTERNAL      00000000              0
+STK05                             EXTERNAL      00000000              0
+STK06                             EXTERNAL      00000000              0
+STK07                             EXTERNAL      00000000              0
+STK08                             EXTERNAL      00000000              0
+STK09                             EXTERNAL      00000000              0
+STK10                             EXTERNAL      00000000              0
+STK11                             EXTERNAL      00000000              0
+STK12                             EXTERNAL      00000000              0
+T0CS                              CONSTANT      00000005              5
+T0IE                              CONSTANT      00000005              5
+T0IF                              CONSTANT      00000002              2
+T0SE                              CONSTANT      00000004              4
+TMR0                              CONSTANT      00000001              1
+TMR0IE                            CONSTANT      00000005              5
+TMR0IF                            CONSTANT      00000002              2
+TRISA                             CONSTANT      00000085            133
+TRISA0                            CONSTANT      00000000              0
+TRISA1                            CONSTANT      00000001              1
+TRISA2                            CONSTANT      00000002              2
+TRISA3                            CONSTANT      00000003              3
+TRISA4                            CONSTANT      00000004              4
+TRISB                             CONSTANT      00000086            134
+TRISB0                            CONSTANT      00000000              0
+TRISB1                            CONSTANT      00000001              1
+TRISB2                            CONSTANT      00000002              2
+TRISB3                            CONSTANT      00000003              3
+TRISB4                            CONSTANT      00000004              4
+TRISB5                            CONSTANT      00000005              5
+TRISB6                            CONSTANT      00000006              6
+TRISB7                            CONSTANT      00000007              7
+W                                 CONSTANT      00000000              0
+WR                                CONSTANT      00000001              1
+WREN                              CONSTANT      00000002              2
+WRERR                             CONSTANT      00000003              3
+WSAVE                             EXTERNAL      00000000              0
+Z                                 CONSTANT      00000002              2
+_00105_DS_                        ADDRESS       00000042             66
+_00106_DS_                        ADDRESS       00000046             70
+_00110_DS_                        ADDRESS       00000084            132
+_00113_DS_                        ADDRESS       000000B2            178
+_00116_DS_                        ADDRESS       00000136            310
+_00118_DS_                        ADDRESS       0000005A             90
+_00119_DS_                        ADDRESS       000000A6            166
+_00121_DS_                        ADDRESS       000000C2            194
+_00123_DS_                        ADDRESS       00000139            313
+_00133_DS_                        ADDRESS       000000BA            186
+_00154_DS_                        ADDRESS       00000030             48
+_00155_DS_                        ADDRESS       00000038             56
+_00156_DS_                        ADDRESS       00000040             64
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                              TYPE        VALUE         VALUE          VALUE
+                                                 (hex)         (dec)          (text)
+
+_00157_DS_                        ADDRESS       00000060             96
+_00158_DS_                        ADDRESS       0000007E            126
+_00159_DS_                        ADDRESS       000000A0            160
+_00160_DS_                        ADDRESS       000000C8            200
+_00167_DS_                        ADDRESS       0000000D             13
+_00169_DS_                        ADDRESS       00000034             52
+_00178_DS_                        ADDRESS       00000013             19
+_CONFIG                           CONSTANT      00002007           8199
+_CP_OFF                           CONSTANT      00003FFF          16383
+_CP_ON                            CONSTANT      0000000F             15
+_FOSC_EXTRC                       CONSTANT      00003FFF          16383
+_FOSC_HS                          CONSTANT      00003FFE          16382
+_FOSC_LP                          CONSTANT      00003FFC          16380
+_FOSC_XT                          CONSTANT      00003FFD          16381
+_HS_OSC                           CONSTANT      00003FFE          16382
+_IDLOC0                           CONSTANT      00002000           8192
+_IDLOC1                           CONSTANT      00002001           8193
+_IDLOC2                           CONSTANT      00002002           8194
+_IDLOC3                           CONSTANT      00002003           8195
+_LP_OSC                           CONSTANT      00003FFC          16380
+_PWRTE_OFF                        CONSTANT      00003FFF          16383
+_PWRTE_ON                         CONSTANT      00003FF7          16375
+_RC_OSC                           CONSTANT      00003FFF          16383
+_WDTE_OFF                         CONSTANT      00003FFB          16379
+_WDTE_ON                          CONSTANT      00003FFF          16383
+_WDT_OFF                          CONSTANT      00003FFB          16379
+_WDT_ON                           CONSTANT      00003FFF          16383
+_XT_OSC                           CONSTANT      00003FFD          16381
+__14_BIT                          CONSTANT      00000001              1
+__16F84                           CONSTANT      00000001              1
+__ACTIVE_BANK_ADDR                VARIABLE      FFFFFFFF             -1
+__ACTIVE_PAGE_ADDR                VARIABLE      FFFFFFFF             -1
+__ASSUMED_BANK_ADDR               VARIABLE      FFFFFFFF             -1
+__BANK_0                          CONSTANT      00000000              0
+__BANK_1                          CONSTANT      00000080            128
+__BANK_BITS                       CONSTANT      00000080            128
+__BANK_FIRST                      CONSTANT      00000000              0
+__BANK_INV                        CONSTANT      FFFFFFFF             -1
+__BANK_LAST                       CONSTANT      00000080            128
+__BANK_MASK                       CONSTANT      0000007F            127
+__BANK_SHIFT                      CONSTANT      00000007              7
+__BANK_SIZE                       CONSTANT      00000080            128
+__CODE_END                        CONSTANT      000003FF           1023
+__CODE_START                      CONSTANT      00000000              0
+__COMMON_RAM_END                  CONSTANT      0000004F             79
+__COMMON_RAM_START                CONSTANT      0000000C             12
+__CONFIG_END                      CONSTANT      00002007           8199
+__CONFIG_START                    CONSTANT      00002007           8199
+__EEPROM_END                      CONSTANT      0000213F           8511
+__EEPROM_START                    CONSTANT      00002100           8448
+__GPUTILS_SVN_VERSION             CONSTANT      00000505           1285
+__GPUTILS_VERSION_MAJOR           CONSTANT      00000001              1
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                              TYPE        VALUE         VALUE          VALUE
+                                                 (hex)         (dec)          (text)
+
+__GPUTILS_VERSION_MICRO           CONSTANT      00000000              0
+__GPUTILS_VERSION_MINOR           CONSTANT      00000005              5
+__IDLOCS_END                      CONSTANT      00002003           8195
+__IDLOCS_START                    CONSTANT      00002000           8192
+__NUM_BANKS                       CONSTANT      00000002              2
+__NUM_PAGES                       CONSTANT      00000001              1
+__PAGE_0                          CONSTANT      00000000              0
+__PAGE_BITS                       CONSTANT      00001800           6144
+__PAGE_FIRST                      CONSTANT      00000000              0
+__PAGE_INV                        CONSTANT      FFFFFFFF             -1
+__PAGE_LAST                       CONSTANT      00000000              0
+__PAGE_MASK                       CONSTANT      000007FF           2047
+__PAGE_SHIFT                      CONSTANT      0000000B             11
+__PAGE_SIZE                       CONSTANT      00000800           2048
+__VECTOR_INT                      CONSTANT      00000004              4
+__VECTOR_RESET                    CONSTANT      00000000              0
+__WHILE_LOOP_COUNT_MAX            CONSTANT      000000FF            255
+__divuint                         EXTERNAL      00000000              0
+__gptrget2                        EXTERNAL      00000000              0
+__gptrput2                        EXTERNAL      00000000              0
+__mulint                          EXTERNAL      00000000              0
+_uplot                            GLOBAL        00000000              0
+_zerobuffer                       GLOBAL        00000000              0
+r0x100A                           STATIC        00000025             37
+r0x100B                           STATIC        00000026             38
+r0x100C                           STATIC        00000002              2
+r0x100D                           STATIC        00000001              1
+r0x100E                           STATIC        00000000              0
+r0x100F                           STATIC        00000005              5
+r0x101A                           STATIC        0000000E             14
+r0x101B                           STATIC        0000000F             15
+r0x101C                           STATIC        00000010             16
+r0x101D                           STATIC        00000011             17
+r0x101E                           STATIC        00000012             18
+r0x101F                           STATIC        00000013             19
+r0x1000                           STATIC        0000001D             29
+r0x1001                           STATIC        0000001C             28
+r0x1002                           STATIC        0000001B             27
+r0x1003                           STATIC        0000001F             31
+r0x1004                           STATIC        0000001E             30
+r0x1005                           STATIC        00000020             32
+r0x1006                           STATIC        00000021             33
+r0x1007                           STATIC        00000022             34
+r0x1008                           STATIC        00000023             35
+r0x1009                           STATIC        00000024             36
+r0x1010                           STATIC        00000004              4
+r0x1011                           STATIC        00000003              3
+r0x1012                           STATIC        00000007              7
+r0x1013                           STATIC        00000006              6
+r0x1014                           STATIC        00000009              9
+r0x1015                           STATIC        00000008              8
+r0x1016                           STATIC        0000000B             11
+gpasm-1.5.0 #1285 (Jun  6 2020) lib/PIC16F84A   06/06/20  18:52:50          PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                              TYPE        VALUE         VALUE          VALUE
+                                                 (hex)         (dec)          (text)
+
+r0x1017                           STATIC        0000000A             10
+r0x1018                           STATIC        0000000D             13
+r0x1019                           STATIC        0000000C             12
+r0x1020                           STATIC        00000014             20
+r0x1021                           STATIC        00000015             21
+r0x1022                           STATIC        00000016             22
+r0x1023                           STATIC        00000017             23
+r0x1024                           STATIC        00000018             24
+r0x1025                           STATIC        0000001A             26
+r0x1026                           STATIC        00000019             25
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    24 reported,     0 suppressed
+
+
